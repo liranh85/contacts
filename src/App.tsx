@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import './App.css';
 import CustomModal from 'src/components/shared/CustomModal/CustomModal';
+import api, { Contact } from 'src/services/api/api';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
+  const [contactList, setContactList] = useState<Contact[]>([])
+
+  useEffect(
+    () => {
+      api.getContacts()
+        .then(contacts => setContactList(contacts))
+        .catch(error => {
+          console.warn('Could not get contacts', error);
+        });
+    },
+    []
+  )
 
   const handleOpenModal = () => {
     setIsOpen(true);
@@ -16,7 +29,16 @@ function App() {
 
   return (
     <div className="app">
-      <Button color="primary" onClick={handleOpenModal}>Open Modal</Button>
+      {
+        contactList.map(({ name, role, isAvailable }, i) => (
+          <div className="contact">
+            <p>Name: {name}</p>
+            <p>Role: {role}</p>
+            <p>{isAvailable ? 'Available' : 'Unavailable'}</p>
+          </div>
+        ))
+      }
+      <Button color="primary" onClick={handleOpenModal}>Add new contact</Button>
       <CustomModal
         isOpen={isOpen}
         onClose={handleCloseModal}
