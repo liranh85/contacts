@@ -17,6 +17,8 @@ const getContacts = () => {
 	return Promise.resolve(contacts);
 };
 
-export default {
+const api = {
 	getContacts,
-}
+};
+
+export default api;
